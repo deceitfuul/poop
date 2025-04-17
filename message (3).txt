@@ -1,0 +1,40 @@
+local distance = 2.5 -- the enemies humanoidrootpart's distance from the tool needed to make the hitbox bigger
+local size = 3
+local debugging = true -- shows humanoidrootpart size when you're close, also prints
+
+if getgenv().WEXDMG then -- this was for me to update the script while the script was in the development stage
+    getgenv().WEXDMG:Disconnect()
+end
+function findhrp(model) -- this finds the humanoid root part of the given model
+    local hrp = nil
+    for i,v in pairs(model:GetChildren()) do
+        if v.ClassName == "Part" and not table.find({"Head","Torso","Right Leg","Right Arm","Left Arm","Left Leg"},v.Name) then
+            hrp = v
+        end
+    end
+    return hrp
+end
+getgenv().WEXDMG = game:GetService("RunService").PreRender:Connect(function()
+    local tool = nil
+    if game:GetService("Players").LocalPlayer.Character and game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool") and string.find(game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Name, "Clean") then
+        tool = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool") -- checks if there is a tool (used at line 22)
+    end
+    for i,v in pairs(game:GetService("Players"):GetPlayers()) do
+        if v ~= game:GetService("Players").LocalPlayer and v.Character and findhrp(v.Character) then
+            if tool and (tool.Handle.Position - findhrp(v.Character).Position).Magnitude < distance then
+                findhrp(v.Character).Size = Vector3.new(size,size,size) -- makes double the size
+                if debugging then
+                    print("changing the size:",v.Character.Name)
+                    local sb = Instance.new("SelectionBox")
+                    sb.Parent = findhrp(v.Character)
+                    sb.Adornee = findhrp(v.Character)
+                    task.delay(0.1,function()
+                        sb:Destroy()
+                    end)
+                end
+            else
+                findhrp(v.Character).Size = Vector3.new(2,2,1) -- makes it the normal size
+            end
+        end
+    end
+end)
