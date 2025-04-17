@@ -1,6 +1,6 @@
 local distance = 2.5 -- the enemies humanoidrootpart's distance from the tool needed to make the hitbox bigger
 local size = 3
-local debugging = true -- shows humanoidrootpart size when you're close, also prints
+local debugging = false -- shows humanoidrootpart size when you're close, also prints
 
 if getgenv().WEXDMG then -- this was for me to update the script while the script was in the development stage
     getgenv().WEXDMG:Disconnect()
